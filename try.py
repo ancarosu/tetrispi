@@ -45,7 +45,7 @@ def display_surface(surface):
             green = int(g * a / 255)
             blue = int(b * a / 255)
             fb.append((red, green, blue))
-   
+
     sense.set_pixels(fb[-DISPLAY_SIZE:])
 
 def render(shape, pos):
@@ -68,7 +68,7 @@ pygame.init()
 pygame.display.set_mode((1, 1))
 blocks = blocks_list()
 
-while(1):
+while True:
     block = blocks[random.randrange(0, 8)]
     p1 = random.randrange(2,6)
     pos = [p1, 3]
