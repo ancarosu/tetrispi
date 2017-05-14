@@ -64,6 +64,8 @@ def print_message(message):
     sense.show_message(message, text_colour = Color('cyan')[:3], back_colour = Color('purple')[:3])
 
 sense.clear()
+pygame.init()
+pygame.display.set_mode((1, 1))
 blocks = blocks_list()
 
 while(1):
@@ -71,7 +73,13 @@ while(1):
     p1 = random.randrange(2,6)
     pos = [p1, 3]
     while(pos[1] <= HEIGHT):
-        time.sleep(0.1)
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT and pos[0] > 0:
+                    pos[0] -= 1
+                elif event.key == pygame.K_RIGHT and pos[0] < 8 - block.get_width():
+                    pos[0] += 1
         pos[1] += 1
         render(block, pos)
+        time.sleep(1)
 sense.clear()
