@@ -24,14 +24,15 @@ def create_block(pattern, color):
 
 def blocks_list():
     blocks = []
-    blocks.append(create_block([[1, 1, 1]], Color('magenta')))
-    blocks.append(create_block([[1, 0, 0], [1, 0, 0], [1, 0, 0]], Color('magenta')))
-    blocks.append(create_block([[1, 1, 0], [0, 1, 1]], Color('cyan')))
-    blocks.append(create_block([[1, 0, 0], [1, 1, 0], [0, 1, 0]], Color('cyan')))
-    blocks.append(create_block([[0, 1, 0], [1, 1, 1]], Color('purple')))
-    blocks.append(create_block([[1, 1, 1], [1, 0, 0]], Color('orange')))
-    blocks.append(create_block([[1, 0, 0], [1, 0, 0], [1, 1, 0]], Color('orange')))
-    blocks.append(create_block([[1, 1], [1, 1]], Color('purple')))
+    colors = [Color('magenta'), Color('cyan'), Color('purple'), Color('pink'), Color('orange'), Color('yellow')]
+    blocks.append(create_block([[1, 1, 1]], colors[random.randrange(0, 5)]))
+    blocks.append(create_block([[1, 0, 0], [1, 0, 0], [1, 0, 0]], colors[random.randrange(0, 5)]))
+    blocks.append(create_block([[1, 1, 0], [0, 1, 1]], colors[random.randrange(0, 5)]))
+    blocks.append(create_block([[1, 0, 0], [1, 1, 0], [0, 1, 0]], colors[random.randrange(0, 5)]))
+    blocks.append(create_block([[0, 1, 0], [1, 1, 1]], colors[random.randrange(0, 5)]))
+    blocks.append(create_block([[1, 1, 1], [1, 0, 0]], colors[random.randrange(0, 5)]))
+    blocks.append(create_block([[1, 0, 0], [1, 0, 0], [1, 1, 0]], colors[random.randrange(0, 5)]))
+    blocks.append(create_block([[1, 1], [1, 1]], colors[random.randrange(0, 5)]))
     return blocks
 
 def display_surface(surface):
@@ -59,9 +60,6 @@ def new_canvas(size=VIRTUAL_SIZE):
     s = pygame.Surface(size, pygame.SRCALPHA)
     s.fill(CLEAR)
     return s
-
-def print_message(message):
-    sense.show_message(message, text_colour = Color('cyan')[:3], back_colour = Color('purple')[:3])
 
 sense.clear()
 pygame.init()
