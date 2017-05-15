@@ -61,6 +61,10 @@ def new_canvas(size=VIRTUAL_SIZE):
     s.fill(CLEAR)
     return s
 
+def rotate_block(block, angle):
+    rotated_block = pygame.transform.rotate(block, angle)
+    return rotated_block
+
 sense.clear()
 pygame.init()
 pygame.display.set_mode((1, 1))
@@ -77,6 +81,8 @@ while True:
                     pos[0] -= 1
                 elif event.key == pygame.K_RIGHT and pos[0] < 8 - block.get_width():
                     pos[0] += 1
+                elif event.key == pygame.K_UP:
+                    block = rotate_block(block, 90)
         pos[1] += 1
         render(block, pos)
         time.sleep(1)
