@@ -1,4 +1,4 @@
-import pygame, sense_hat, time, random, sys
+import pygame, sense_hat, time, random, sys, math
 from pygame.color import Color
 
 sense = sense_hat.SenseHat()
@@ -61,6 +61,9 @@ def block_mask(block, x, y):
     block_canvas.blit(block, [x, y], special_flags=pygame.BLEND_RGBA_ADD)
     return pygame.mask.from_surface(block_canvas, THRESHOLD)
 
+def game_over(score):
+    sense.show_message("Game over, score: ", score) 
+
 class Game:
 
     def __init__ (self, size = VIRTUAL_SIZE):
@@ -113,52 +116,91 @@ class Game:
     def remove_line(self):
         background_mask = pygame.mask.from_surface(self.background, THRESHOLD)
         for row in range(self.height):
+            check_area = new_canvas()
             pygame.draw.line(check_area, Color('white'), (0, row), (self.width -1, row))
-            check_area_mask = pygame.mask.from_surface(check_area, TRESHOLD)
+            check_area_mask = pygame.mask.from_surface(check_area, THRESHOLD)
             if background_mask.overlap_area(check_area_mask, (0,0)) == self.width:
                 self.background.set_clip(pygame.Rect((0, 0), (self.width, row + 1)))
                 self.background.scroll(0, 1)
                 self.background.set_clip(None)
                 background_mask = pygame.mask.from_surface(self.background, THRESHOLD)
 
-
-
     def render(self):
         canvas = new_canvas()
         canvas.fill(CLEAR)
-        canvas.blit( self.block, [self.block_x, self.block_y], special_flags=pygame.BLEND_RGBA_ADD)
+        canvas.blit(self.background, (0, 0))
+        canvas.blit(self.block, [self.block_x, self.block_y], special_flags=pygame.BLEND_RGBA_ADD)
         display_surface(canvas)
 
-def main():
+
+def tetris():
     sense.clear()
     pygame.init()
     pygame.display.set_mode((1, 1))
     s = Game()
+    clock = pygame.time.Clock()
+    frames = 0
+    frames_before_drop = 10
+    drop_block = False
+    
+    try:
+        while True:
+            frames += 1
+            # One move event per frame simplifies collision detection and plays better
+            moved = False
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return
+                if drop_block and event.type == pygame.KEYUP and event.key == pygame.K_RETURN:
+                    drop_block = False
+                    #moved = True
+                if event.type == pygame.KEYDOWN:
+                    if event.key in (pygame.K_ESCAPE, pygame.K_q):
+                        return
+                    if not drop_block and not moved:
+                        if event.key == pygame.K_LEFT:
+                            moved = s.move_block(-1,0)
+                        if event.key == pygame.K_RIGHT:
+                            moved = s.move_block(1,0)
+                        if event.key == pygame.K_UP:
+                            moved = s.rotate_block(90)
+                        if event.key == pygame.K_DOWN:
+                            moved = s.rotate_block(-90)
+                        if event.key == pygame.K_RETURN:
+                            drop_block = True
+            frames_before_drop -= 1
+            if frames_before_drop == 0:
+                if s.move_block(0, 1): # Move down
+                    pass
+                else: # Collision downwards at pos_y+1
+                    s.add_block_to_background()
+                    s.remove_line()
+                    if not s.new_block():
+                        break # New block collides with existing blocks
+                    drop_block = False
+                # Progressively reduce to make game harder,
+                frames_before_drop = 10 - int(math.log(frames,5))
+            s.render()
+            if drop_block:
+                clock.tick(FPS*10)  # Fast descent
+            else:
+                clock.tick(FPS)
+    except KeyboardInterrupt:
+        return
+    game_over(frames/10)
 
-    while True:
-    #    block = blocks[random.randrange(0, 8)]
-    #   p1 = random.randrange(2,6)
-    #    pos = [p1, 3]
-    #   while(pos[1] <= HEIGHT):
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    moved = s.move_block(-1,0)
-                elif event.key == pygame.K_RIGHT:
-                    moved = s.move_block(1,0)
-                elif event.key == pygame.K_UP:
-                    moved = s.rotate_block(90)
-                elif event.key == pygame.K_DOWN:
-                    moved = s.rotate_block(-90)
-        s.move_block(0,1)
-        s.render()
-        time.sleep(1)
+
+def main():
+    tetris()
     sense.clear()
-
+    pygame.quit()
+    sys.exit()
+    
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
         print "Clear screen before force exit"
         sense.clear()
+        pygame.quit()
         sys.exit()
