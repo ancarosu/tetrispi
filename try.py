@@ -107,6 +107,22 @@ class Game:
         else:
             return False
 
+    def add_block_to_background(self):
+        self.background.blit(self.block, [self.block_x, self.block_y], special_flags=pygame.BLEND_RGBA_ADD)
+
+    def remove_line(self):
+        background_mask = pygame.mask.from_surface(self.background, THRESHOLD)
+        for row in range(self.height):
+            pygame.draw.line(check_area, Color('white'), (0, row), (self.width -1, row))
+            check_area_mask = pygame.mask.from_surface(check_area, TRESHOLD)
+            if background_mask.overlap_area(check_area_mask, (0,0)) == self.width:
+                self.background.set_clip(pygame.Rect((0, 0), (self.width, row + 1)))
+                self.background.scroll(0, 1)
+                self.background.set_clip(None)
+                background_mask = pygame.mask.from_surface(self.background, THRESHOLD)
+
+
+
     def render(self):
         canvas = new_canvas()
         canvas.fill(CLEAR)
