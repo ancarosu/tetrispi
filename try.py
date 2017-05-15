@@ -1,4 +1,4 @@
-import pygame, sense_hat, time, random
+import pygame, sense_hat, time, random, sys
 from pygame.color import Color
 
 sense = sense_hat.SenseHat()
@@ -113,17 +113,17 @@ class Game:
         canvas.blit( self.block, [self.block_x, self.block_y], special_flags=pygame.BLEND_RGBA_ADD)
         display_surface(canvas)
 
+def main():
+    sense.clear()
+    pygame.init()
+    pygame.display.set_mode((1, 1))
+    s = Game()
 
-sense.clear()
-pygame.init()
-pygame.display.set_mode((1, 1))
-s = Game()
-
-while True:
-#    block = blocks[random.randrange(0, 8)]
-#   p1 = random.randrange(2,6)
-#    pos = [p1, 3]
-#   while(pos[1] <= HEIGHT):
+    while True:
+    #    block = blocks[random.randrange(0, 8)]
+    #   p1 = random.randrange(2,6)
+    #    pos = [p1, 3]
+    #   while(pos[1] <= HEIGHT):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
@@ -137,4 +137,12 @@ while True:
         s.move_block(0,1)
         s.render()
         time.sleep(1)
-sense.clear()
+    sense.clear()
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print "Clear screen before force exit"
+        sense.clear()
+        sys.exit()
