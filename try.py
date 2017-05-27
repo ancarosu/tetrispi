@@ -23,17 +23,24 @@ def create_block(pattern, color):
                 block.set_at((x, y), color)
     return block
 
+def color_scheme(scheme = "DEFAULT"):
+    if scheme == "WARM":
+        colors = [Color('goldenrod3'), Color('orangered'), Color('red3'), Color('darkorange'), Color('sienna4'), Color('tomato4'), Color('red'), Color('orange'), Color('yellow')]
+    elif scheme == "DEFAULT":
+        colors = [Color('magenta'), Color('cyan'), Color('darkmagenta'), Color('darkorange'), Color('turquoise4'), Color('purple'), Color('pink'), Color('orange'), Color('yellow')]
+    return colors
+    
+
 def blocks_list():
     blocks = []
-    colors = [Color('magenta'), Color('cyan'), Color('purple'), Color('pink'), Color('orange'), Color('yellow')]
-    blocks.append(create_block([[1, 1, 1]], colors[random.randrange(0, 5)]))
-    blocks.append(create_block([[1, 0, 0], [1, 0, 0], [1, 0, 0]], colors[random.randrange(0, 5)]))
-    blocks.append(create_block([[1, 1, 0], [0, 1, 1]], colors[random.randrange(0, 5)]))
-    blocks.append(create_block([[1, 0, 0], [1, 1, 0], [0, 1, 0]], colors[random.randrange(0, 5)]))
-    blocks.append(create_block([[0, 1, 0], [1, 1, 1]], colors[random.randrange(0, 5)]))
-    blocks.append(create_block([[1, 1, 1], [1, 0, 0]], colors[random.randrange(0, 5)]))
-    blocks.append(create_block([[1, 0, 0], [1, 0, 0], [1, 1, 0]], colors[random.randrange(0, 5)]))
-    blocks.append(create_block([[1, 1], [1, 1]], colors[random.randrange(0, 5)]))
+    colors = color_scheme()
+    blocks.append(create_block([[1, 1], [1, 1]], colors[random.randrange(0, len(colors))]))
+    blocks.append(create_block([[1, 1, 0], [0, 1, 1]], colors[random.randrange(0, len(colors))]))
+    blocks.append(create_block([[1, 1, 0], [0, 1, 1]], colors[random.randrange(0, len(colors))]))
+    blocks.append(create_block([[0, 1, 1], [1, 1, 0]], colors[random.randrange(0, len(colors))]))
+    blocks.append(create_block([[0, 1, 0], [1, 1, 1]], colors[random.randrange(0, len(colors))]))
+    blocks.append(create_block([[1, 0, 0], [1, 1, 1]], colors[random.randrange(0, len(colors))]))
+    blocks.append(create_block([[1, 1, 1]], colors[random.randrange(0, len(colors))]))
     return blocks
 
 def display_surface(surface):
@@ -62,7 +69,9 @@ def block_mask(block, x, y):
     return pygame.mask.from_surface(block_canvas, THRESHOLD)
 
 def game_over(score):
-    sense.show_message("Game over, score: ", score) 
+    message = "Score: " + str(score)
+    print message
+    sense.show_message(message, scroll_speed = 1) 
 
 class Game:
 
@@ -185,9 +194,9 @@ def tetris():
                 clock.tick(FPS*10)  # Fast descent
             else:
                 clock.tick(FPS)
+        game_over(frames)
     except KeyboardInterrupt:
         return
-    game_over(frames/10)
 
 
 def main():
