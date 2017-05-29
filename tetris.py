@@ -19,8 +19,9 @@ def color_scheme(scheme = "WARM"):
         colors = [Color('magenta'), Color('cyan'), Color('darkmagenta'), Color('darkorange'), Color('turquoise4'), Color('purple'), Color('pink'), Color('orange'), Color('yellow')]
     return colors
 
+
 def create_block(pattern):
-    colors = color_scheme()
+    colors = color_scheme(theme)
     this_color = colors[random.randrange(0, len(colors))]
     height = len(pattern)
     width = (max(len(row) for row in pattern))
@@ -39,7 +40,6 @@ def blocks_list():
     blocks.append(create_block([[1, 1], [1, 1]]))
     blocks.append(create_block([[1, 1, 0], [0, 1, 1]]))
     blocks.append(create_block([[0, 1, 1], [1, 1, 0]]))
-    blocks.append(create_block([[0, 1, 0], [1, 1, 1]]))
     blocks.append(create_block([[1, 0, 0], [1, 1, 1]]))
     blocks.append(create_block([[0, 0, 1], [1, 1, 1]]))
     blocks.append(create_block([[1, 1, 1]]))
@@ -73,9 +73,11 @@ def block_mask(block, x, y):
     return pygame.mask.from_surface(block_canvas, THRESHOLD)
 
 def game_over(score):
+    f = open('scores.txt', 'a')
+    f.write(player_name + ": " + str(score) + "\n")
     message = "Score: " + str(score)
-    print message
-    sense.show_message(message, scroll_speed = 1) 
+    sense.show_message(message, scroll_speed = 1)
+    
 
 class Game:
 
@@ -194,6 +196,19 @@ def tetris():
 
 
 def main():
+    global player_name
+    global theme
+
+    if len(sys.argv) == 3:
+        player_name = sys.argv[1]
+        theme = sys.argv[2]
+    else:
+        player_name = "Jane Doe"
+        theme = "WARM"
+
+    print player_name
+    print theme
+    
     tetris()
     sense.clear()
     pygame.quit()
