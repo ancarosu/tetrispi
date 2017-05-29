@@ -12,7 +12,16 @@ CLEAR = (0, 0, 0, 0)
 THRESHOLD = 10
 FPS = 10
 
-def create_block(pattern, color):
+def color_scheme(scheme = "WARM"):
+    if scheme == "WARM":
+        colors = [Color('goldenrod3'), Color('orangered'), Color('red3'), Color('darkorange'), Color('sienna4'), Color('tomato4'), Color('red'), Color('orange'), Color('yellow')]
+    elif scheme == "DEFAULT":
+        colors = [Color('magenta'), Color('cyan'), Color('darkmagenta'), Color('darkorange'), Color('turquoise4'), Color('purple'), Color('pink'), Color('orange'), Color('yellow')]
+    return colors
+
+def create_block(pattern):
+    colors = color_scheme()
+    this_color = colors[random.randrange(0, len(colors))]
     height = len(pattern)
     width = (max(len(row) for row in pattern))
     block = pygame.Surface((width, height), pygame.SRCALPHA)
@@ -20,27 +29,22 @@ def create_block(pattern, color):
     for x, row in enumerate(pattern):
         for y, element in enumerate(row):
             if element:
-                block.set_at((x, y), color)
+                block.set_at((x, y), this_color)
     return block
 
-def color_scheme(scheme = "DEFAULT"):
-    if scheme == "WARM":
-        colors = [Color('goldenrod3'), Color('orangered'), Color('red3'), Color('darkorange'), Color('sienna4'), Color('tomato4'), Color('red'), Color('orange'), Color('yellow')]
-    elif scheme == "DEFAULT":
-        colors = [Color('magenta'), Color('cyan'), Color('darkmagenta'), Color('darkorange'), Color('turquoise4'), Color('purple'), Color('pink'), Color('orange'), Color('yellow')]
-    return colors
-    
 
 def blocks_list():
     blocks = []
-    colors = color_scheme()
-    blocks.append(create_block([[1, 1], [1, 1]], colors[random.randrange(0, len(colors))]))
-    blocks.append(create_block([[1, 1, 0], [0, 1, 1]], colors[random.randrange(0, len(colors))]))
-    blocks.append(create_block([[1, 1, 0], [0, 1, 1]], colors[random.randrange(0, len(colors))]))
-    blocks.append(create_block([[0, 1, 1], [1, 1, 0]], colors[random.randrange(0, len(colors))]))
-    blocks.append(create_block([[0, 1, 0], [1, 1, 1]], colors[random.randrange(0, len(colors))]))
-    blocks.append(create_block([[1, 0, 0], [1, 1, 1]], colors[random.randrange(0, len(colors))]))
-    blocks.append(create_block([[1, 1, 1]], colors[random.randrange(0, len(colors))]))
+    blocks.append(create_block([[1, 1], [1, 1]]))
+    blocks.append(create_block([[1, 1], [1, 1]]))
+    blocks.append(create_block([[1, 1, 0], [0, 1, 1]]))
+    blocks.append(create_block([[0, 1, 1], [1, 1, 0]]))
+    blocks.append(create_block([[0, 1, 0], [1, 1, 1]]))
+    blocks.append(create_block([[1, 0, 0], [1, 1, 1]]))
+    blocks.append(create_block([[0, 0, 1], [1, 1, 1]]))
+    blocks.append(create_block([[1, 1, 1]]))
+    blocks.append(create_block([[1, 0, 0], [1, 1, 1]]))
+    blocks.append(create_block([[0, 1, 0], [0, 1, 0], [0, 1, 0]]))
     return blocks
 
 def display_surface(surface):
@@ -150,7 +154,6 @@ def tetris():
     clock = pygame.time.Clock()
     frames = 0
     frames_before_drop = 10
-    drop_block = False
     
     try:
         while True:
@@ -160,13 +163,10 @@ def tetris():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return
-                if drop_block and event.type == pygame.KEYUP and event.key == pygame.K_RETURN:
-                    drop_block = False
-                    #moved = True
                 if event.type == pygame.KEYDOWN:
                     if event.key in (pygame.K_ESCAPE, pygame.K_q):
                         return
-                    if not drop_block and not moved:
+                    if not moved:
                         if event.key == pygame.K_LEFT:
                             moved = s.move_block(-1,0)
                         if event.key == pygame.K_RIGHT:
@@ -175,8 +175,6 @@ def tetris():
                             moved = s.rotate_block(90)
                         if event.key == pygame.K_DOWN:
                             moved = s.rotate_block(-90)
-                        if event.key == pygame.K_RETURN:
-                            drop_block = True
             frames_before_drop -= 1
             if frames_before_drop == 0:
                 if s.move_block(0, 1): # Move down
@@ -186,14 +184,10 @@ def tetris():
                     s.remove_line()
                     if not s.new_block():
                         break # New block collides with existing blocks
-                    drop_block = False
                 # Progressively reduce to make game harder,
                 frames_before_drop = 10 - int(math.log(frames,5))
             s.render()
-            if drop_block:
-                clock.tick(FPS*10)  # Fast descent
-            else:
-                clock.tick(FPS)
+            clock.tick(FPS)
         game_over(frames)
     except KeyboardInterrupt:
         return
