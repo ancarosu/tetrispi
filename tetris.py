@@ -12,7 +12,7 @@ CLEAR = (0, 0, 0, 0)
 THRESHOLD = 10
 FPS = 10
 
-def color_scheme(scheme = "WARM"):
+def color_scheme(scheme = "DEFAULT"):
     if scheme == "WARM":
         colors = [Color('goldenrod3'), Color('orangered'), Color('red3'), Color('darkorange'), Color('sienna4'), Color('tomato4'), Color('red'), Color('orange'), Color('yellow')]
     elif scheme == "DEFAULT":
