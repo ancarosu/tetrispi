@@ -17,6 +17,8 @@ def color_scheme(scheme = "WARM"):
         colors = [Color('goldenrod3'), Color('orangered'), Color('red3'), Color('darkorange'), Color('sienna4'), Color('tomato4'), Color('red'), Color('orange'), Color('yellow')]
     elif scheme == "DEFAULT":
         colors = [Color('magenta'), Color('cyan'), Color('darkmagenta'), Color('darkorange'), Color('turquoise4'), Color('purple'), Color('pink'), Color('orange'), Color('yellow')]
+    elif scheme == "COLD":
+        colors = [Color('turquoise1'), Color('cyan'), Color('lightgray'), Color('white'), Color('limegreen'), Color('lightskyblue'), Color('lightcyan'), Color('honeydew')]
     return colors
 
 
@@ -205,9 +207,6 @@ def main():
     else:
         player_name = "Jane Doe"
         theme = "WARM"
-
-    print player_name
-    print theme
     
     tetris()
     sense.clear()
